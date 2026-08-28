@@ -1,0 +1,177 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-email-reply",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "04e7a455-74fd-4a34-af35-a5f5a24bae16",
+      "name": "Webhook",
+      "webhookId": "346c9270-3944-4687-804f-631144bf66bf"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d149009b-40ef-4c20-84b1-2a1c3bc86481",
+              "name": "Name",
+              "value": "={{$json.body.name}}",
+              "type": "string"
+            },
+            {
+              "id": "27b26b80-4d63-4b56-9748-356f838a4ba8",
+              "name": "Email",
+              "value": "={{$json.body.email}}",
+              "type": "string"
+            },
+            {
+              "id": "03882ee2-e869-41c1-bac3-de98203fb2d8",
+              "name": "message",
+              "value": "={{$json.body.message}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "bfdf3c06-6350-4cf3-a6c0-571b2a192866",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful AI email assistant.\n\nGenerate a professional, friendly, and personalized email reply.\n\nCustomer Name: {{ $json.Name }}\nCustomer Email: {{ $json.Email }}\nCustomer Message: {{ $json.message }}\n\nInstructions:\n\n- Understand the customer's message and reply appropriately.\n- Address the customer by their name.\n- Keep the response professional, friendly, and concise.\n- Generate ONLY the email body.\n- Do NOT include a subject line.\n- Do NOT write \"Subject:\" anywhere.\n- Do NOT use Markdown.\n- Do NOT use ``` code blocks.\n- Generate the email body in HTML format.\n- Use <p>...</p> for separate paragraphs.\n- Use <br> for line breaks.\n- Use <strong>...</strong> when emphasis is useful.\n- Do NOT include <html>, <head>, or <body> tags.\n- Do NOT include placeholders such as [Your Name] or [Name].\n- End the email with:\n\n<p>Best regards,<br>\nBhavana</p>\n\nReturn ONLY the HTML email body.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "354c8b08-b6e5-4b66-b34d-dd1903f51bfc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "mbavanabhavana@gmail.com",
+        "subject": "AI Course Information",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "558fab06-2adb-4825-9220-03f7f5d57ba8",
+      "name": "Send a message",
+      "webhookId": "b80a762d-325c-4392-801e-c8a93837075d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GW5OhTcC1SoUd4CO",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        208
+      ],
+      "id": "af9847a1-a834-471f-8df9-db69a7b226f7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zGBsfS9vJc2mMdf5",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "beb250ed-e848-446c-bc49-f511b150c159",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1800e08fc393ac3b85b1ce78c075ae9896c73856a5db56b474a918751cffab82"
+  },
+  "nodeGroups": [],
+  "id": "ItwCjYxTVrcEKFth",
+  "tags": []
+}
